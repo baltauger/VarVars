@@ -83,6 +83,8 @@ package net.bauger.varvars
 			
 			_behaviors.push(behavior);
 			
+			refreshBehaviorBounds();
+			
 			return this;
 		}
 		
