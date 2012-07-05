@@ -49,17 +49,32 @@ package net.bauger.varvars
 		protected var _baseValue:Number;
 		
 		/**
+		 * Minimum value for this varvar
+		 */
+		protected var _minValue:Number;
+		
+		/**
+		 * Maximum value for this varvar
+		 */
+		protected var _maxValue:Number;
+		
+		/**
 		 * VarVars can have either one of attack, sustain and decay behaviors added to them
 		 * @param	baseValue The value the varvar starts at and will try to return to (in case of decay)
+		 * @param	maxValue The biggest value the varvar can have
+		 * @param	minValue The smallest value the varvar can have
 		 * @param	cacheDelay How long the cached value will last
 		 */
-		public function VarVar(baseValue:Number = 0, cacheDelay:Number = 0)
+		public function VarVar(baseValue:Number = 0, maxValue:Number = NaN, minValue:Number = NaN, cacheDelay:Number = 0)
 		{
 			super();
 			
 			_cacheDelay = cacheDelay;
 			
 			_baseValue = _value = _setValue = _cachedValue = baseValue;
+			
+			_minValue = minValue;
+			_maxValue = maxValue;
 			
 			_lastCalc = _lastModify = getTimer();
 			
@@ -133,7 +148,11 @@ package net.bauger.varvars
 			//Log the time of modification
 			_lastModify = getTimer();
 			
-			//Commit values
+			//Commit values while respecting minimum and maximum bounds
+			if (!isNaN(_minValue)) value = Math.max(value, _minValue);
+			
+			if (!isNaN(_maxValue)) value = Math.min(value, _maxValue);
+			
 			_setValue = value;
 			
 			//Recalculate start-end values of behaviors
